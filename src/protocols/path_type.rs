@@ -1,6 +1,11 @@
 use crate::config::TypeColors;
 use std::fs::Metadata;
+
+#[cfg(not(windows))]
 use std::os::unix::fs::FileTypeExt;
+#[cfg(windows)]
+use std::os::windows::fs::{FileExt, FileTypeExt, FileTypeExt};
+
 use std::path::{Path, PathBuf};
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -15,6 +20,7 @@ pub enum PathType {
     Unknown,
 }
 
+/// TODO: Changed imports, but I'm not getting any errors registered here yet, I'm sure there will be some
 impl PathType {
     pub fn from_path(file: &Path, metadata: Option<Metadata>) -> anyhow::Result<Self> {
         let metadata = match metadata {
@@ -44,6 +50,7 @@ impl PathType {
             Self::Unknown
         })
     }
+
     pub fn letter(&self) -> &'static str {
         match self {
             Self::BlockDevice => "b",
@@ -56,6 +63,7 @@ impl PathType {
             Self::Unknown => "?",
         }
     }
+
     pub fn color(&self, colors: &TypeColors) -> crate::config::Color {
         match self {
             Self::BlockDevice => colors.block_device,
@@ -68,6 +76,7 @@ impl PathType {
             Self::Unknown => colors.unknown,
         }
     }
+
     pub fn extra(&self) -> Option<colored::ColoredString> {
         use colored::Colorize;
         match self {
