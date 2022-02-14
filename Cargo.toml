@@ -1,16 +1,16 @@
 [package]
-name = "ctv"
-license = "MIT"
-version = "0.3.3"
 authors = ["Angelina Tsuboi <angelina.t1832@gmail.com>"]
-description = "A highly configurable tree file view visualizer CLI tool"
-readme = "README.md"
-homepage = "https://github.com/angelina-tsuboi/ctv"
-repository = "https://github.com/angelina-tsuboi/ctv"
-keywords = ["cli", "treeview", "tree", "visualizer", "file"]
 categories = ["command-line-utilities"]
+description = "A highly configurable tree file view visualizer CLI tool"
 edition = "2018"
+homepage = "https://github.com/angelina-tsuboi/ctv"
 include = ["/src", "README.md", "contributing.md", "Cargo.toml", "media"]
+keywords = ["cli", "treeview", "tree", "visualizer", "file"]
+license = "MIT"
+name = "ctv"
+readme = "README.md"
+repository = "https://github.com/angelina-tsuboi/ctv"
+version = "0.3.3"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -23,7 +23,12 @@ dirs = "4.0.0"
 figment = { version = "0.10.6", features = ["toml", "env"] }
 filetime = "0.2"
 humansize = "1.1.1"
-libc = "0.2.95"
 serde = { version = "1.0.127", features = ["derive"] }
 toml = "0.5.8"
+
+[target.'cfg(windows)'.dependencies]
+windows-acl = "0.3.0"
+
+[target.'cfg(not(windows))'.dependencies]
+libc = "0.2.95"
 users = "0.11.0"

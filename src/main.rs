@@ -1,3 +1,6 @@
+// TODO: Figure out if this is worth it
+#![feature(windows_file_type_ext)]
+
 mod args;
 mod config;
 mod protocols;

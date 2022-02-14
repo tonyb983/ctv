@@ -4,7 +4,7 @@ use std::fs::Metadata;
 #[cfg(not(windows))]
 use std::os::unix::fs::FileTypeExt;
 #[cfg(windows)]
-use std::os::windows::fs::{FileExt, FileTypeExt, FileTypeExt};
+use std::os::windows::fs::{FileExt, FileTypeExt};
 
 use std::path::{Path, PathBuf};
 
@@ -20,9 +20,9 @@ pub enum PathType {
     Unknown,
 }
 
-/// TODO: Changed imports, but I'm not getting any errors registered here yet, I'm sure there will be some
 impl PathType {
-    pub fn from_path(file: &Path, metadata: Option<Metadata>) -> anyhow::Result<Self> {
+    #[cfg(not(windows))]
+    fn from_path_unix(file: &Path, metadata: Option<Metadata>) -> anyhow::Result<Self> {
         let metadata = match metadata {
             Some(metadata) => metadata,
             None => file.symlink_metadata()?,
@@ -49,6 +49,19 @@ impl PathType {
         } else {
             Self::Unknown
         })
+    }
+
+    /// TODO: Write this function dummy.
+    #[cfg(windows)]
+    fn from_path_windows(file: &Path, metadata: Option<Metadata>) -> anyhow::Result<Self> {
+        Ok(Self::Unknown)
+    }
+
+    pub fn from_path(file: &Path, metadata: Option<Metadata>) -> anyhow::Result<Self> {
+        #[cfg(windows)]
+        return Self::from_path_windows(file, metadata);
+        #[cfg(not(windows))]
+        return Self::from_path_unix(file, metadata);
     }
 
     pub fn letter(&self) -> &'static str {

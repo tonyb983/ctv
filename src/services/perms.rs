@@ -65,8 +65,8 @@ impl PermType {
     }
 }
 
-/// TODO: No immediate errors on this function but we'll see
-pub fn perms(metadata: &std::fs::Metadata, colors: &PermColors) -> String {
+#[cfg(not(windows))]
+fn perms_unix(metadata: &std::fs::Metadata, colors: &PermColors) -> String {
     let mode = metadata.permissions().mode() as mode_t;
 
     let user = PermType::User.format(mode, colors);
@@ -74,4 +74,18 @@ pub fn perms(metadata: &std::fs::Metadata, colors: &PermColors) -> String {
     let other = PermType::Other.format(mode, colors);
 
     [user, group, other].join("")
+}
+
+/// TODO: Figure out windows version
+#[cfg(windows)]
+fn perms_windows(metadata: &std::fs::Metadata, colors: &PermColors) -> String {
+    String::new()
+}
+
+pub fn perms(metadata: &std::fs::Metadata, colors: &PermColors) -> String {
+    #[cfg(not(windows))]
+    return perms_unix(metadata, colors);
+
+    #[cfg(windows)]
+    return perms_windows(metadata, colors);
 }
